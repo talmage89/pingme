@@ -1,0 +1,12 @@
+# Local credentials and backups (only the template is public).
+.env
+.env.*
+!.env.example
+*.bak
+*.bak.*
+# Build output.
+/push-notifs
+/dist/
+*.test
+coverage.out
+.DS_Store
