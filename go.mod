@@ -1,4 +1,4 @@
-module github.com/talmage89/push-notifs
+module github.com/talmage89/pingme
 
 go 1.26.0
 

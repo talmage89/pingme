@@ -5,7 +5,7 @@
 *.bak
 *.bak.*
 # Build output.
-/push-notifs
+/pingme
 /dist/
 *.test
 coverage.out

@@ -37,7 +37,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	if err := run(ctx, os.Args[1:], os.Stdin, os.Stdout); err != nil {
-		fmt.Fprintln(os.Stderr, "push-notifs:", err)
+		fmt.Fprintln(os.Stderr, "pingme:", err)
 		os.Exit(1)
 	}
 }
@@ -56,7 +56,7 @@ func envPath() (string, error) {
 
 func run(ctx context.Context, args []string, in io.Reader, out io.Writer) error {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" || args[0] == "-h" {
-		fmt.Fprintln(out, "Usage: push-notifs <send|setup|agents> [options]\n  send [--env PATH] [--title TITLE] [--silent] MESSAGE\n  send [--env PATH] -  (read stdin)\n  setup [--env PATH]\n  agents  (print instructions for coding agents)\nFlags must precede the message. Credentials default to .env beside the resolved binary.")
+		fmt.Fprintln(out, "Usage: pingme <send|setup|agents> [options]\n  send [--env PATH] [--title TITLE] [--silent] MESSAGE\n  send [--env PATH] -  (read stdin)\n  setup [--env PATH]\n  agents  (print instructions for coding agents)\nFlags must precede the message. Credentials default to .env beside the resolved binary.")
 		return nil
 	}
 	if args[0] == "agents" {
@@ -151,7 +151,7 @@ func loadConfig(path string) (config, error) {
 	var c config
 	f, err := os.Open(path)
 	if err != nil {
-		return c, errors.New("cannot open .env; run push-notifs setup or use --env PATH")
+		return c, errors.New("cannot open .env; run pingme setup or use --env PATH")
 	}
 	defer f.Close()
 	info, err := f.Stat()
@@ -308,7 +308,7 @@ func setup(ctx context.Context, path string, out io.Writer) error {
 	if _, err = rand.Read(nonce[:]); err != nil {
 		return err
 	}
-	code := "push-notifs-" + hex.EncodeToString(nonce[:])
+	code := "pingme-" + hex.EncodeToString(nonce[:])
 	fmt.Fprintf(out, "Open https://t.me/%s on your phone, tap Start, and send this exact message:\n\n  %s\n\nWaiting up to three minutes for your private chat...\n", bot.Username, code)
 	wait, cancel := context.WithTimeout(ctx, 3*time.Minute)
 	defer cancel()
@@ -365,10 +365,10 @@ func setup(ctx context.Context, path string, out io.Writer) error {
 		return err
 	}
 	fmt.Fprintln(out, "Credentials saved with permissions 600.")
-	if err = client.send(ctx, id, "push-notifs is ready. Coding agents can now send notifications to this chat.", false); err != nil {
+	if err = client.send(ctx, id, "pingme is ready. Coding agents can now send notifications to this chat.", false); err != nil {
 		return fmt.Errorf("credentials saved, but test notification failed: %w", err)
 	}
-	fmt.Fprintln(out, "Test notification accepted. Run push-notifs agents for agent instructions.")
+	fmt.Fprintln(out, "Test notification accepted. Run pingme agents for agent instructions.")
 	return nil
 }
 
